@@ -318,6 +318,5 @@ for(let r = 0 ; r <= rowSize ; r++){
 }
 console.log(counter)
 }
-
 boarding(map);
 
