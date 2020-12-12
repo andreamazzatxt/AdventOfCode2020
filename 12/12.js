@@ -61,7 +61,10 @@ function navigationPartOne(instructions){
 }
 //PART TWO 
 function directionPartTwo(wayPoint,instruction){
-    // CALCULATING HOW MANY STEPS OF 90 DEGREES AND APPLY TO WAYPOINT N TIMES
+    // CALCULATING HOW MANY STEPS OF 90 DEGREES AND APPLY TO WAYPOINT N TIMES 
+    // A "STEP " OF 90 DEGREES CORRESPOND TO SWAPPING X AND Y AXES VALUES.
+    // IN CASE OF NEGATIVE DEGREE VALUES (LEFT TURN) AXES X COORD BECOME NEGATIVE
+    // IN CASE OF POSITIVE DEGREE VALUES (RIGHT TURN) AXES Y COORD BECOME NEGATIVE
     let degrees = instruction[1] ;
     let direction = instruction[0] ; 
     let steps = degrees/90 ;
