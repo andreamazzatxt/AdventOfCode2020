@@ -4,6 +4,7 @@ let instructions = fs.readFileSync('./12.txt',{encoding: 'utf-8'}).split('\n').m
 
 function changeDirection(prev,degrees){
     let orientations = ['N','E','S','W']
+    //CALCULATING HOW MANY "SPIN" OF 90 DEGREES AND MOVING THROUGH THE ORIENTATIONS ARRAY (WHICH IS IN ORDER) 
     let spin = degrees/90;
     let posAct = orientations.indexOf(prev) + spin;
     let pos = ((posAct % 4 ) + 4 ) % 4 ;
@@ -58,8 +59,9 @@ function navigationPartOne(instructions){
     })
     return Math.abs(ns)+Math.abs(we);
 }
-
+//PART TWO 
 function directionPartTwo(wayPoint,instruction){
+    // CALCULATING HOW MANY STEPS OF 90 DEGREES AND APPLY TO WAYPOINT N TIMES
     let degrees = instruction[1] ;
     let direction = instruction[0] ; 
     let steps = degrees/90 ;
