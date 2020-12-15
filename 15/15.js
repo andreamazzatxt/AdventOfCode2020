@@ -1,3 +1,4 @@
+const { Console } = require('console');
 const fs = require('fs');
 
 let input = fs.readFileSync('./15.txt', {encoding : 'utf-8'}).split(',').map(n => {
@@ -8,50 +9,35 @@ let input = fs.readFileSync('./15.txt', {encoding : 'utf-8'}).split(',').map(n =
 
 function play(array,loops,part){
     let turn = 1;
-    let sayedNumber = {};
-    let lastNumber = null;
+    let spokenNumber = new Map();
+    let nextNumber = null;
     array.forEach((number) => {
-        sayedNumber[number] = {
-            lastSeen: turn,
-            beforeSeen: null
-        }
-        lastNumber = number;
+        spokenNumber.set(number,turn)
+        nextNumber = number;
         turn++;
     });
-    while(turn <= loops){
-        // IF LAST NUMBER NOT ALREADY IN THE LIST 
-        if(sayedNumber[lastNumber].beforeSeen === null){
-            lastNumber = 0;
-            if(!sayedNumber[lastNumber]){
-                sayedNumber[lastNumber] = {
-                    lastSeen: turn,
-                    beforeSeen: null,
-                }
-                
-            }else{
-                sayedNumber[0].beforeSeen = sayedNumber[0].lastSeen;
-                sayedNumber[0].lastSeen = turn; 
-            }
-        // IF LAST NUMBER ALREADY IN THE LIST
-        }else{
-            lastNumber = sayedNumber[lastNumber].lastSeen - sayedNumber[lastNumber].beforeSeen;
-            if(!sayedNumber[lastNumber]){
-                sayedNumber[lastNumber] = {
-                    lastSeen : turn,
-                    beforeSeen : null,
-                }
-            }else{
-                sayedNumber[lastNumber].beforeSeen = sayedNumber[lastNumber].lastSeen;
-                sayedNumber[lastNumber].lastSeen = turn;
-            }
-        }
+    turn--;
+    nextNumber = 0;
+    while(turn < loops-1){
         turn++;
-
+        // IF LAST NUMBER WAS FIRST SPOKEN
+        if(!spokenNumber.has(nextNumber)){
+            let temp = nextNumber;
+            nextNumber = 0;
+            spokenNumber.set(temp,turn)
+        }else{
+        // IF LAST NUMBER WAS NOT FIRST SPOKEN
+        let temp = nextNumber;
+            nextNumber = turn - spokenNumber.get(nextNumber);
+            spokenNumber.set(temp,turn)
+        }
     }
 
-   console.log(part + lastNumber);
+   console.log(part + nextNumber);
 }
-// PART TWO NEEDS APROX 500 seconds TO GIVE THE RESULT 
+// PART TWO NEEDS APROX [6,23s user 0,20s system 96% cpu 6,684 total]  
+//TO GIVE THE RESULT (DEPENDING OF HW)
+
 play(input,2020,'PART ONE: ')
 play(input,30000000,'PART TWO: ')
 
