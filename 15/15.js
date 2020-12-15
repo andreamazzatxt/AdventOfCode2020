@@ -5,7 +5,6 @@ let input = fs.readFileSync('./15.txt', {encoding : 'utf-8'}).split(',').map(n =
     return parseInt(n);
 });
 
-// PART ONE 
 
 function play(array,loops,part){
     let turn = 1;
