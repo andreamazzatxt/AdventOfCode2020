@@ -19,7 +19,7 @@ function play(array,loops,part){
         turn++;
     });
     while(turn <= loops){
-
+        // IF LAST NUMBER NOT ALREADY IN THE LIST 
         if(sayedNumber[lastNumber].beforeSeen === null){
             lastNumber = 0;
             if(!sayedNumber[lastNumber]){
@@ -32,7 +32,7 @@ function play(array,loops,part){
                 sayedNumber[0].beforeSeen = sayedNumber[0].lastSeen;
                 sayedNumber[0].lastSeen = turn; 
             }
-
+        // IF LAST NUMBER ALREADY IN THE LIST
         }else{
             lastNumber = sayedNumber[lastNumber].lastSeen - sayedNumber[lastNumber].beforeSeen;
             if(!sayedNumber[lastNumber]){
@@ -51,6 +51,7 @@ function play(array,loops,part){
 
    console.log(part + lastNumber);
 }
+// PART TWO NEEDS APROX 500 seconds TO GIVE THE RESULT 
 play(input,2020,'PART ONE: ')
 play(input,30000000,'PART TWO: ')
 
