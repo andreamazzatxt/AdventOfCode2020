@@ -1,7 +1,6 @@
-const { Console } = require('console');
 const fs = require('fs');
 
-let input = fs.readFileSync('./15.txt', {encoding : 'utf-8'}).split(',').map(n => {
+let input = fs.readFileSync('./15.txt','utf-8').split(',').map(n => {
     return parseInt(n);
 });
 
