@@ -1,4 +1,5 @@
 const fs = require('fs');
+const colors =require('colors')
 const input = fs.readFileSync('./16.txt','utf-8').split('\n\n');
 let rules = input[0].split('\n').map(e => {
     return e.split(': ')[1]
@@ -33,7 +34,7 @@ function partOne(tickets,rules){
     let result = invalid.reduce((acc,curr) =>{
        return parseInt(acc) + parseInt(curr)
    })
-     console.log('PART ONE: ' +result)
+     console.log('PART ONE: '.rainbow.bold +result)
 };
 
 // PART TWO
@@ -124,10 +125,11 @@ function partTwo(tickets,rules,rulesObject){
         arrPosToCheck.forEach(position => {
             result *= parseInt(myTicket[position])
         })
-        console.log('PART TWO: ' + result)
+        console.log('PART TWO: '.rainbow.bold +result)
 
 };
 
-
+console.log('......................................');
 partOne(nearbyTickets,splittedRules)
 partTwo(nearbyTickets,splittedRules,rulesObject)
+console.log('......................................');
