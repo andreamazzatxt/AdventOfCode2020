@@ -138,7 +138,7 @@ function countActiveAdiacentsCubes(ThreeDimensionModel,X,Y,Z){
     }
 
 
-function cycles(initialLayer,target){
+function partOne(initialLayer,target){
    let cycles = 0;  
    let layerwidth = initialLayer.length // assuming it is always a square layer 
    let ThreeDimensionModel = [initialLayer];  
@@ -160,7 +160,7 @@ function cycles(initialLayer,target){
     TempThreeDimensionModel.forEach((layer,layerindex) =>{
 
         layer.forEach((line,lineindex) =>{
-    
+
             line.forEach((cube,cubeindex) =>{
               let count = countActiveAdiacentsCubes(TempThreeDimensionModel,cubeindex,lineindex,layerindex) ;
               //Condition to inactive/active the current cube
@@ -192,4 +192,4 @@ function cycles(initialLayer,target){
    console.log('PART ONE: '.rainbow + countFinalActive);
 }
 
-cycles(input,6)
+partOne(input,6)
