@@ -1,7 +1,6 @@
 const fs = require('fs');
 const colors = require ('colors');
 let input = fs.readFileSync('./22.txt','utf-8').split('\n\n');
-
 let playerOne = input[0].split('\n').slice(1);
 playerOne = playerOne.map(num =>{
     return parseInt(num);
@@ -10,8 +9,6 @@ let playerTwo = input[1].split('\n').slice(1);
 playerTwo =playerTwo.map(num =>{
     return parseInt(num);
 })
-
-
 function combat(deckOne,deckTwo){
     deckOne = deckOne.slice(0);
     deckTwo = deckTwo.slice(0);
@@ -48,7 +45,6 @@ function combat(deckOne,deckTwo){
     })
     console.log(points)
 }
-
 console.log('PART ONE: (no recursion)'.rainbow.bold)
 combat(playerOne,playerTwo);
 
@@ -70,7 +66,6 @@ function checkMemoryGame(memory,deckOne,deckTwo){
         return false;
     }
 }
-
 function RecursiveCombat(deckOne,deckTwo){
     deckOne = deckOne.slice(0);
     deckTwo = deckTwo.slice(0);
@@ -98,7 +93,6 @@ function RecursiveCombat(deckOne,deckTwo){
                 deckTwo.push(sideTwo);
                 deckTwo.push(sideOne);
             }
-
         }else{
             if(sideOne > sideTwo){
             deckOne.push(sideOne);
@@ -124,7 +118,6 @@ function RecursiveCombat(deckOne,deckTwo){
 // this part take about 30 seconds to calculate the winner
 console.log('PART TWO (with recursion take some time to calclulate winner...)'.rainbow.bold)
  let recursiveWinner = RecursiveCombat(playerOne,playerTwo)
-
 recursiveWinner[1].reverse();
 let points = 0;
 recursiveWinner[1].forEach((card,index)=>{
