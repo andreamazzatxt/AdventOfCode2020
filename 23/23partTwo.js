@@ -2,6 +2,10 @@ const fs = require('fs');
 const colors = require ('colors');
 let input = fs.readFileSync('./23.txt','utf-8').split('').map(e=> parseInt(e));
 
+for ( let i = Math.max(...input)+1 ; i <= 1000000 ; i++){
+    input.push(i);
+} 
+
 class Cup {
     constructor(value){
         this.value = value;
@@ -19,19 +23,26 @@ class Cups {
     constructor(head){
         this.head = head;
         this.size = 1;
+        this.maxCup = 1000000;
+        this.cupMapping = new Map();
     }
    initialize(array){
     let current = this.head;
+
     array.forEach(cupData =>{
+         this.cupMapping.set(current.value, current);
         let newCup = new Cup(cupData);
         current.setNext(newCup);
         let prev = current;
         current = current.next;
         current.setPrevious(prev);
         this.size = this.size +1;
+
     })
     current.setNext(this.head)
     this.head.setPrevious(current);
+    this.cupMapping.set(current.value, current);
+    //this.max();
    }
    print(){
        let current = this.head;
@@ -62,16 +73,8 @@ class Cups {
        prev.setNext(next);
        next.setPrevious(prev);
        this.size--
+       this.cupMapping.delete(cupToDelete.value);
        return cupToDelete.value;
-   }
-   max(){
-    let max = 0;
-    let current = this.head;
-    for(let i = 0 ;  i < this.size ; i++ ){
-        max = current.value > max ? current.value : max;
-        current = current.next;
-    } 
-    return max
    }
    add(destinationCup,cup){
     let temp = destinationCup.next;
@@ -81,6 +84,7 @@ class Cups {
     temp.setPrevious(newCup);
     newCup.setNext(temp);
     this.size++
+    this.cupMapping.set(newCup.value,newCup)
     return newCup
    }
    partOne(){
@@ -91,11 +95,16 @@ class Cups {
            current = current.next;
        }
        return result
-
    }
-
+   partTwo(){
+       let one = this.cupMapping.get(1);
+        let first = one.next;
+        let second = first.next;
+        console.log('First : ' + first.value);
+        console.log('Second : ' +second.value)
+        return (first.value*second.value)
+   }
 }
-
 function game(array){
     //initialize Cups class
     let firstCup = new Cup(array[0]);
@@ -103,30 +112,36 @@ function game(array){
     crabCups.initialize(array.slice(1)) 
     let current = crabCups.head
     let turns = 1;
-    while(turns <= 100 ){
+    while(turns <= 10000000   ){
+        if( turns% 1000000 === 0){
+            console.log('Processing Turn -' + turns)
+        }
+/*         console.log('Turn: ' +turns)
+        console.log('Current : '.green.bold + current.value)
+        crabCups.print(); */
         // Removing...
         let removedCups = [];
         for( let i = 0 ; i < 3 ; i++){
-            removedCups.push(crabCups.delete(current.next));
+            let removed = crabCups.delete(current.next);
+            removedCups.push(removed);
           }
+/* 
+          console.log('Removing : '.red.bold + removedCups) */
         // Find Destination... 
       let foundDest = false;
-      let sub = 1;
+      let objective = current.value;
       let destinationCup = null;
       while(!foundDest){
-        if((current.value-sub) > 0){
-         if(crabCups.find(current.value-sub) !==  null ){
-          destinationCup = crabCups.find(current.value-sub)   
-            foundDest = true;
-        }else{
-            sub++;
-        }
-        }else{
-            destinationCup = crabCups.find(crabCups.max());
+         objective--;
+        if(objective <= 0 ){
+            objective = crabCups.maxCup+1;
+        } else if(!removedCups.includes(objective)){
+            destinationCup = crabCups.cupMapping.get(objective);
             foundDest = true;
         }
       }
-
+/*       console.log('Destination : '.blue.bold + destinationCup.value)
+      console.log('--------') */
     // Place Removed....
      removedCups.forEach(cup=>{
         destinationCup = crabCups.add(destinationCup,cup);
@@ -136,18 +151,8 @@ function game(array){
         turns++
     }
 
-    console.log('PART ONE : '.rainbow.bold);
+    console.log('PART TWO : '.rainbow.bold);
     // FIND RESULT 
-    console.log(crabCups.partOne());
+    console.log(crabCups.partTwo());
 }
 game(input);
-
-
-
-
-
-
-
-
-
-
