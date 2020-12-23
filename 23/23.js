@@ -1,88 +1,156 @@
 const fs = require('fs');
 const colors = require ('colors');
 let input = fs.readFileSync('./23.txt','utf-8').split('').map(e=> parseInt(e));
-function cupGame(cups){
-    let currentCup = {
-        index: 0,
-        value: cups[0],
-    };
-    let turns = 1;
-    while(turns != 101 ){
-        console.log( 'TURN : ' +turns);
-        console.log('Cups : '.blue.bold);
-        console.log(cups)
-        console.log('Current Cup'.red.bold);
-        console.log(currentCup);
-        // removing three cups handling circular.
-        let removedCups = []
-      for( let i = 0 ; i < 3 ; i++){
-          if (cups[currentCup.index+1]){
-              removedCups.push(cups.splice(currentCup.index+1,1));
-          }else{
-              removedCups.push(cups.splice(0,1))
-          }
-      }
-      removedCups = removedCups.flat();
-      console.log('Pick-Up'.green.bold)
-      console.log(removedCups);
-      //update index of current cap ( in case is changed for removing cups)
-      currentCup.index = cups.indexOf(currentCup.value);
 
-      // find Destination cup 
+class Cup {
+    constructor(value){
+        this.value = value;
+        this.next = null;
+        this.previous = null;
+    }
+    setNext(nextCup){
+        this.next = nextCup;
+    }
+    setPrevious(previousCup){
+        this.previous = previousCup;
+    }
+}
+class Cups {
+    constructor(head){
+        this.head = head;
+        this.size = 1;
+    }
+   initialize(array){
+    let current = this.head;
+    array.forEach(cupData =>{
+        let newCup = new Cup(cupData);
+        current.setNext(newCup);
+        let prev = current;
+        current = current.next;
+        current.setPrevious(prev);
+        this.size = this.size +1;
+    })
+    current.setNext(this.head)
+    this.head.setPrevious(current);
+   }
+   print(){
+       let current = this.head;
+       for(let i = 0 ;  i < this.size ; i++ ){
+           console.log(current.value + '<-->');
+           current = current.next;
+       }
+       console.log(current.value + '...')
+   }
+   find(value){
+       let current = this.head
+    for(let i = 0 ;  i < this.size ; i++ ){
+       if(current.value === value){
+         return current;
+       }else{
+           current = current.next
+       }
+    }
+    return null;
+   }
+
+   delete(value){
+       let cupToDelete = this.find(value);
+       if( cupToDelete === this.head){
+           this.head = this.head.next;
+       }
+       let prev = cupToDelete.previous;
+       let next = cupToDelete.next;
+       prev.setNext(next);
+       next.setPrevious(prev);
+       this.size--
+       return cupToDelete.value;
+   }
+   max(){
+    let max = 0;
+    let current = this.head;
+    for(let i = 0 ;  i < this.size ; i++ ){
+        max = current.value > max ? current.value : max;
+        current = current.next;
+    } 
+    return max
+   }
+   add(destination,cup){
+    let destinationCup = this.find(destination)
+    let temp = destinationCup.next;
+    let newCup = new Cup(cup)
+    destinationCup.setNext(newCup);
+    newCup.setPrevious(destinationCup);
+    temp.setPrevious(newCup);
+    newCup.setNext(temp);
+    this.size++
+    return newCup
+   }
+   partOne(){
+       let result = '';
+       let current = this.find(1).next;
+       for(let i = 0 ;  i < this.size-1 ; i++ ){
+           result+= current.value;
+           current = current.next;
+       }
+       return result
+
+   }
+
+}
+
+function game(array){
+    //initialize Cups class
+    let firstCup = new Cup(array[0]);
+    let crabCups = new Cups(firstCup);
+    crabCups.initialize(array.slice(1)) 
+    crabCups.print();
+    let current = crabCups.head
+    let turns = 1;
+    while(turns <= 100 ){
+        // Removing...
+        let removedCups = [];
+        for( let i = 0 ; i < 3 ; i++){
+            removedCups.push(crabCups.delete(current.next.value));
+          }
+        // Find Destination... 
       let foundDest = false;
       let sub = 1;
       let destinationCup = null;
       while(!foundDest){
-        if((currentCup.value-sub) > 0){
-         if( cups.indexOf(currentCup.value-sub) !== -1 ){
-          destinationCup = {
-          index :cups.indexOf(currentCup.value-sub),
-          value :currentCup.value-sub,
-            }   
+        if((current.value-sub) > 0){
+         if(crabCups.find(current.value-sub) !==  null ){
+          destinationCup = crabCups.find(current.value-sub)   
             foundDest = true;
         }else{
             sub++;
         }
         }else{
-            destinationCup ={
-                index : cups.indexOf(Math.max(...cups)),
-                value : Math.max(...cups),
-            }
+            destinationCup = crabCups.find(crabCups.max());
             foundDest = true;
         }
       }
-      console.log('DestinationCup'.yellow.bold);
-      console.log(destinationCup)
-      // Place removed Cups in the the next clockwise index of destination cup
-      if( destinationCup.index +1 === cups.length){
-          cups = [...cups,...removedCups];
-      }else{
-        let indexToInsert = (destinationCup.index+1)
-        cups.splice(...[indexToInsert,0].concat(removedCups))
-      }
-    //update index of current cap ( in case is changed for re adding removed cups)
-    currentCup.index = cups.indexOf(currentCup.value);
 
-      
+    // Place Removed....
+     removedCups.forEach(cup=>{
+        destinationCup = crabCups.add(destinationCup.value,cup);
+     })
        // Find a new Current Cup
-       currentCup = {
-           index: (currentCup.index+1)%cups.length,
-           value: cups[(currentCup.index+1)%cups.length]
-       }
-
-
-       console.log('=====')
-        turns++;
+       current = current.next;
+        turns++
     }
+
     console.log('FINAL'.rainbow.bold);
-    console.log(cups)
     // FIND RESULT 
-    let indexOfOne= cups.indexOf(1);
-    let firstPart = cups.slice(0,indexOfOne);
-    let result = cups.slice(indexOfOne+1).concat(firstPart).join('');
-    console.log(result) 
-
+    console.log(crabCups.partOne());
 }
+game(input);
 
-cupGame(input);
+
+
+
+
+
+
+
+
 
