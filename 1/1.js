@@ -67,7 +67,7 @@ function checkThree(arr){
 //checkTT(expenses);
 //console.log(checkTTS(expenses,sum));
 checkThree(expenses);
- console.log('ciao come stai')
+
   
 
 
